@@ -1,9 +1,9 @@
 package hellojpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
+import org.hibernate.Hibernate;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JpaMain {
@@ -16,26 +16,24 @@ public class JpaMain {
         tx.begin();
 
         try {
+            Address address = new Address("city", "street", "10000");
 
-            //저장
             Member member = new Member();
             member.setUsername("member1");
-
+            member.setHomeAddress(address);
             em.persist(member);
 
-            Team team = new Team();
-            team.setName("teamA");
-            team.getMembers().add(member);
+            Address newAddress = new Address("NewCity", address.getStreet(), address.getZipcode());
 
-            em.persist(team);
+            member.setHomeAddress(newAddress);
 
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
-
         emf.close();
     }
 }
